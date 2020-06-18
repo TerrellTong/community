@@ -72,7 +72,7 @@ public class UserService implements CommunityConstant {
 
         //添加用户
         user.setSalt(CommunityUtil.generateUUID().substring(0,5));
-        user.setPassword(CommunityUtil.md5(user.getPassword())+user.getSalt());
+        user.setPassword(CommunityUtil.md5(user.getPassword()+user.getSalt()));
         user.setType(0);
         user.setStatus(0);
         //String.format用于类型格式化重载，在字符串中添加参数
