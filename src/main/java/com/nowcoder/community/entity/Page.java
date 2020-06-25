@@ -7,7 +7,7 @@ public class Page {
     private int limit = 10;
     //数据总数（用于计算总页数）
     private int rows;
-    //查询路径（用于复用分页链接）
+    //查询路径（用于复用分页链接，用于前台页面）
     private String path;
 
     public int getCurrent() {

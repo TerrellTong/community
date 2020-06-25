@@ -91,7 +91,7 @@ public class DiscussPostController implements CommunityConstant {
                         Map<String, Object> replyVo = new HashMap<>();
                         //回复
                         replyVo.put("reply", reply);
-                        //作者
+                        //写下该评论的作者
                         replyVo.put("user", userService.findUserById(reply.getUserId()));
                         //回复目标,针对某一人特定回复
                         User target = reply.getTargetId() == 0 ? null : userService.findUserById(reply.getTargetId());
