@@ -12,7 +12,7 @@
 <body>
 	<div class="nk-container">
 		<!-- 头部 -->
-		<header class="bg-dark sticky-top">
+		<header class="bg-dark sticky-top" th:replace="index::header">
 			<div class="container">
 				<!-- 导航 -->
 				<nav class="navbar navbar-expand-lg navbar-dark">
@@ -85,7 +85,7 @@
 								<form>
 									<div class="form-group">
 										<label for="recipient-name" class="col-form-label">发给：</label>
-										<input type="text" class="form-control" id="recipient-name" value="落基山脉下的闲人">
+										<input type="text" class="form-control" id="recipient-name" th:value="${target.username}">
 									</div>
 									<div class="form-group">
 										<label for="message-text" class="col-form-label">内容：</label>

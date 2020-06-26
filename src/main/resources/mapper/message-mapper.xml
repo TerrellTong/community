@@ -7,6 +7,10 @@
         id, from_id, to_id, conversation_id, content, status, create_time
     </sql>
 
+    <sql id="insertFields">
+        from_id, to_id, conversation_id, content, status, create_time
+    </sql>
+
     <!--由于message表中，一个会话列表存在多条对话，
         因此从message表中相应的from_id/to_id的最大的id，最大的id表示最新的会话
         并按照conversation_id进行分组-->
@@ -62,6 +66,20 @@
             and conversation_id = #{conversationId}
         </if>
     </select>
+
+    <insert id="insertMessage" parameterType="Message" keyProperty="id">
+        insert into message(<include refid="insertFields"></include>)
+        values (#{fromId},#{toId},#{conversationId},#{content},#{status},#{createTime})
+    </insert>
+
+    <update id="updateStatus">
+        update message set status = #{status}
+        where id in
+        <!--对集合参数进行处理-->
+        <foreach collection="ids" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </update>
 
 
 </mapper>

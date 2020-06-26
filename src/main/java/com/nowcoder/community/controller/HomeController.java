@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -24,6 +25,14 @@ public class HomeController {
 
     @Autowired
     private UserService userService;
+
+    //默认页面跳转
+    @RequestMapping("/")
+    public String index(Model model, HttpServletResponse response) {
+        model.addAttribute("name", "simonsfan");
+        //进行转发给/index
+        return "forward:/index";
+    }
 
     @RequestMapping(path="/index",method = RequestMethod.GET)
     public String getIndexPage(Model model, Page page){
@@ -48,5 +57,10 @@ public class HomeController {
         }
         model.addAttribute("discussPosts",discussPosts);
         return "/index";
+    }
+
+    @RequestMapping(path = "/error",method = RequestMethod.GET)
+    public String getErrorPage(){
+        return "/error/500";
     }
 }
