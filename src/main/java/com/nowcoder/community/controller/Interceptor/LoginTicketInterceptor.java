@@ -53,7 +53,6 @@ public class LoginTicketInterceptor implements HandlerInterceptor {
     }
 
     //TemplateEngine模板处理后进行以下操作
-
     @Override
     public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) throws Exception {
         hostHolder.clearUser();
