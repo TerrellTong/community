@@ -4,6 +4,7 @@ import com.nowcoder.community.entity.LoginTicket;
 import org.apache.ibatis.annotations.Mapper;
 
 @Mapper
+@Deprecated
 public interface LoginTicketMapper {
     //插入一条LoginTicket
     int insertLoginTickt(LoginTicket loginTicket);

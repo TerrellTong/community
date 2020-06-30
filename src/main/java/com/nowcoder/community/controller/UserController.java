@@ -15,10 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
@@ -123,14 +120,17 @@ public class UserController implements CommunityConstant {
     //修改密码
     @LoginRequired
     @RequestMapping(path = "/ModifyPassword", method = RequestMethod.POST)
-    public String register(Model model,String newpassword,String oldpassword) {
+    public String register(Model model,String newpassword,String oldpassword,
+                           @CookieValue("ticket") String code) {
         User user = hostHolder.getUser();
         Map<String, Object> map = userService.updatePassword(user, oldpassword, newpassword);
         //map为空说明没有问题
         if (map == null || map.isEmpty()) {
+            //退出用户，修改该凭证的相关信息
+            userService.logout(code);
             model.addAttribute("msg", "密码修改成功，即将跳转到登录页面");
             model.addAttribute("target", "/login");
-            return "/site/operate-result";
+            return "site/operate-result";
         } else {
             //map为空说明出现了问题，并转到register页面中
             model.addAttribute("pwdMsg", map.get("pwdMsg"));
