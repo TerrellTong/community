@@ -1,10 +1,11 @@
-function like(btn,entityType,entityId,entityUserId) {
+function like(btn,entityType,entityId,entityUserId,postId) {
 	$.post(
 		CONTEXT_PATH + "/like",
 		{
 			"entityType":entityType,
 			"entityId":entityId,
-			"entityUserId":entityUserId
+			"entityUserId":entityUserId,
+			"postId":postId
 		},
 		function (data) {
 			//将json字符串转成JS对象
