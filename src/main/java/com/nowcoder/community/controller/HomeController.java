@@ -13,6 +13,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletResponse;
@@ -41,15 +42,16 @@ public class HomeController implements CommunityConstant {
     }
 
     @RequestMapping(path="/index",method = RequestMethod.GET)
-    public String getIndexPage(Model model, Page page){
+    public String getIndexPage(Model model, Page page,
+                               @RequestParam(name="orderMode",defaultValue = "0") int orderMode){
         //在方法调用前，SpringMVC会自动实例化Model和Page，并将Page注入Model.
         //所以，在thymeleaf中可以直接访问Page对象中的数据(相当于page已经存在了Model中了)
         page.setRows(discussPostService.findDiscussPostRows(0));
         //分页链接的请求/index?current=xxx ,current是存储在了page中
-        page.setPath("/index");
+        page.setPath("/index?orderMode="+orderMode);
 
         //通过page类中的current的来计算offset，起始行
-        List<DiscussPost> list = discussPostService.findDiscussPost(0,page.getOffset(),page.getLimit());
+        List<DiscussPost> list = discussPostService.findDiscussPost(0,page.getOffset(),page.getLimit(),orderMode);
         List<Map<String,Object>> discussPosts = new ArrayList();
         if(list != null){
             for(DiscussPost post : list){
@@ -66,6 +68,7 @@ public class HomeController implements CommunityConstant {
                 discussPosts.add(map);
             }
         }
+        model.addAttribute("orderMode",orderMode);
         model.addAttribute("discussPosts",discussPosts);
         return "/index";
     }

@@ -9,7 +9,9 @@ import com.nowcoder.community.service.UserService;
 import com.nowcoder.community.util.CommunityConstant;
 import com.nowcoder.community.util.CommunityUtil;
 import com.nowcoder.community.util.HostHolder;
+import com.nowcoder.community.util.RedisKeyUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -34,6 +36,8 @@ public class DiscussPostController implements CommunityConstant {
     private LikeService likeService;
     @Autowired
     private EventProducer eventProducer;
+    @Autowired
+    private RedisTemplate redisTemplate;
 
     @RequestMapping(path = "/add",method = RequestMethod.POST)
     @ResponseBody
@@ -50,12 +54,17 @@ public class DiscussPostController implements CommunityConstant {
         discussPostService.addDiscussPost(post);
 
         //发布消息，然后让kafka处理，然后添加到ES服务器中
+        //触发发帖事件
         Event event = new Event()
                 .setTopic(TOPIC_PUBLISH)
                 .setUserId(user.getId())
                 .setEntityType(ENTITY_TYPE_POST)
                 .setEntityId(post.getId());
         eventProducer.fireEvent(event);
+
+        //放入缓存，计算贴子分数
+        String redisKey = RedisKeyUtil.getPostScoreKey();
+        redisTemplate.opsForSet().add(redisKey,post.getId());
 
         //报错的情况，将来统一进行处理
         return CommunityUtil.getJSONString(0,"发布成功!");
@@ -164,7 +173,7 @@ public class DiscussPostController implements CommunityConstant {
         return CommunityUtil.getJSONString(0);
     }
 
-    //置顶
+    //加精
     @RequestMapping(path = "/wonderful",method = RequestMethod.POST)
     @ResponseBody
     public String setWonderful(int id){
@@ -177,6 +186,10 @@ public class DiscussPostController implements CommunityConstant {
                 .setEntityType(ENTITY_TYPE_POST)
                 .setEntityId(id);
         eventProducer.fireEvent(event);
+
+        //放入缓存，计算贴子分数
+        String redisKey = RedisKeyUtil.getPostScoreKey();
+        redisTemplate.opsForSet().add(redisKey,id);
 
         return CommunityUtil.getJSONString(0);
     }
